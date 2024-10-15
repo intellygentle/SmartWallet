@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract MyToken is ERC20 {
-    constructor()ERC20("IntellygentleToken","INTELL"){} 
+    constructor()ERC20("Intellygentle Token","INTELL"){} 
 
     function mint100tokens() public {
         _mint(msg.sender,100*10**18);
