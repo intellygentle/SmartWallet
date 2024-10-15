@@ -10,6 +10,8 @@
   "description": "",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@sentio/cli": "^2.21.4",
+    "@sentio/hardhat-sentio": "^1.1.0",
     "hardhat": "^2.22.8"
   },
   "dependencies": {

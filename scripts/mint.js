@@ -1,52 +1,35 @@
-// Import necessary modules from Hardhat and SwisstronikJS
-const hre = require("hardhat");
-const { encryptDataField, decryptNodeResponse } = require("@swisstronik/utils");
 
-// Function to send a shielded transaction using the provided signer, destination, data, and value
-const sendShieldedTransaction = async (signer, destination, data, value) => {
-  // Get the RPC link from the network configuration
-  const rpcLink = hre.network.config.url;
-
-  // Encrypt transaction data
-  const [encryptedData] = await encryptDataField(rpcLink, data);
-
-  // Construct and sign transaction with encrypted data
-  return await signer.sendTransaction({
-    from: signer.address,
-    to: destination,
-    data: encryptedData,
-    value,
-  });
-};
+const { ethers } = require("hardhat");
 
 async function main() {
-  // Address of the deployed contract
-  const contractAddress = "0x0391db80A185E74C470cE0618124A40Bfb32c4DE";
+    // Replace with the address where you deployed your MyToken contract
+    const contractAddress = "";
 
-  // Get the signer (your account)
-  const [signer] = await hre.ethers.getSigners();
+    // Get the wallet to interact with the contract (the first account from the Hardhat node)
+    const [deployer] = await ethers.getSigners();
 
-  // Create a contract instance
-  const contractFactory = await hre.ethers.getContractFactory("MyToken");
-  const contract = contractFactory.attach(contractAddress);
+    console.log("Interacting with the contract using the deployer account:", deployer.address);
 
-  // Send a shielded transaction to mint 100 tokens in the contract
-  const functionName = "mint100tokens";
-  const mint100TokensTx = await sendShieldedTransaction(
-    signer,
-    contractAddress,
-    contract.interface.encodeFunctionData(functionName),
-    0
-  );
+    // ABI of the MyToken contract
+    const contractABI = [
+        "function mint100tokens() public",
+        "function balanceOf(address account) view returns (uint256)"
+    ];
 
-  await mint100TokensTx.wait();
+    // Create a contract instance
+    const myToken = new ethers.Contract(contractAddress, contractABI, deployer);
 
-  // It should return a TransactionReceipt object
-  console.log("Transaction Receipt: ", mint100TokensTx);
+    // Call the mint100tokens function
+    console.log("Minting 100 tokens...");
+    const tx = await myToken.mint100tokens();
+    await tx.wait(); // Wait for the transaction to be mined
+
+    console.log("Minting successful!");
+
+    
 }
 
-// Using async/await pattern to handle errors properly
 main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
+    console.error("Error minting tokens:", error);
+    process.exitCode = 1;
 });

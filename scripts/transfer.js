@@ -1,39 +1,37 @@
-// Import necessary modules from Hardhat and SwisstronikJS
+// Import necessary modules from Hardhat
 const hre = require("hardhat");
-const { encryptDataField, decryptNodeResponse } = require("@swisstronik/utils");
 
-// Function to send a shielded transaction using the provided signer, destination, data, and value
-const sendShieldedTransaction = async (signer, destination, data, value) => {
-  // Get the RPC link from the network configuration
-  const rpcLink = hre.network.config.url;
-
-  // Encrypt transaction data
-  const [encryptedData] = await encryptDataField(rpcLink, data);
-
-  // Construct and sign transaction with encrypted data
+// Function to send a transaction using the provided signer, destination, data, and value
+const sendTransaction = async (signer, destination, data, value) => {
+  // Construct and sign transaction with provided data
   return await signer.sendTransaction({
     from: signer.address,
     to: destination,
-    data: encryptedData,
+    data,
     value,
   });
 };
 
 async function main() {
   // Address of the deployed contract
-  const replace_contractAddress = "0x0391db80A185E74C470cE0618124A40Bfb32c4DE";
+  const contractAddress = "";
 
   // Get the signer (your account)
   const [signer] = await hre.ethers.getSigners();
 
   // Create a contract instance
-  const replace_contractFactory = await hre.ethers.getContractFactory("MyToken");
-  const contract = replace_contractFactory.attach(replace_contractAddress);
+  const contractFactory = await hre.ethers.getContractFactory("MyToken");
+  const contract = contractFactory.attach(contractAddress);
 
-  // Send a shielded transaction to execute a transaction in the contract
-  const replace_functionName = "transfer";
-  const replace_functionArgs = ["0x16af037878a6cAce2Ea29d39A3757aC2F6F7aac1", "1000000000000000000"];
-  const transaction = await sendShieldedTransaction(signer, replace_contractAddress, contract.interface.encodeFunctionData(replace_functionName, replace_functionArgs), 0);
+  // Send a transaction to execute a function in the contract
+  const functionName = "transfer";
+  const functionArgs = ["0x16af037878a6cAce2Ea29d39A3757aC2F6F7aac1", "10000000000000000000"];
+  
+  // Encode the function call data
+  const data = contract.interface.encodeFunctionData(functionName, functionArgs);
+  
+  // Send the transaction
+  const transaction = await sendTransaction(signer, contractAddress, data, 0);
 
   await transaction.wait();
 
