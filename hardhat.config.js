@@ -6,11 +6,11 @@ require("dotenv").config();
 
 
 module.exports = {
-  //  https://rpc.ankr.com/fantom,
+  //  https://rpc.ankr.com/fantom, https://rpc.testnet.soniclabs.com
   solidity: "0.8.19",
   networks: {
-    sonic: {
-      url: "https://rpc.testnet.soniclabs.com",
+    sepolia: {
+      url: "https://sepolia.infura.io/v3/9d4fb17b3184495790dab02b82c37aff",
       accounts: [`0x` + `${process.env.PRIVATE_KEY}`],
     },
   },
